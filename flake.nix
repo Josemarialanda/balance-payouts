@@ -18,12 +18,13 @@
         devShell = pkgs.haskellPackages.shellFor {
           packages = p: [
           ];
-          buildInputs = with pkgs.haskellPackages; [
-            cabal-install
-            ghcid                   
-            haskell-language-server 
-            hlint                   
-            ormolu                 
+          buildInputs = with pkgs; [
+            haskellPackages.cabal-install
+            haskellPackages.ghcid                   
+            haskellPackages.haskell-language-server 
+            haskellPackages.hlint                   
+            haskellPackages.ormolu        
+            pkgs.sqlite         
           ];
           withHoogle = true;
         };
