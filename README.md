@@ -1,15 +1,24 @@
+# DONE:
+
+* Can read and create balance and payout csv from multiple users.csv
+* Memory usage is constant using streaming architecture.
+* DB choice is sqlite3. (Currently DB IO operations are currently sequential...)
+* Although program is type safe, error handling could be improved...
+  * I return a malformed csv error if there is an error (in the CSV of course, e.g could not parse a field)
+* 
+
 # FIXME:
 
 * Is balance supposed to grow to crazy big numbers with the supplied rate.csv? Calculations look correct. 
+* Cant do insert operations concurrently with sqlite3?
 
 # TODO: 
 
-* Upload CSV to DB in chunks rather than doing single IO operations... lol
+* UCurrently, CSV is uploaded to db in single IO operations... lol
   * options are: 
     * Shard CSV file? - nah, that would require more than constant memory usage...
     * Stream CSV in chunks to the csv upload action? - amortized constant space complexity is good enough
-
-* Make command line interface
+    * Upload multiple csv files in parallel
 
 * Check max age parameter
 

@@ -1,10 +1,11 @@
 module Csv.Stream.StreamCsv ( mkDailyAccountBalanceAndMonthlyPayout ) where
-
+  
 import qualified Csv.Utils            as U
 import qualified Csv.Types            as T
 import qualified Data.Vector          as V
+-- import Control.Concurrent             ( forkIO, threadDelay )
 import DB.Stream.StreamDB             ( uploadCsv )
-import Control.Monad                  ( forM_ )
+import Control.Monad                  ( forM_  )
 import Control.Monad.IO.Class         ( MonadIO (..) )
 import Data.CSV.Conduit.Conversion    ( FromNamedRecord ( parseNamedRecord )
                                       , ToNamedRecord ( toNamedRecord )
@@ -30,6 +31,10 @@ mkDailyAccountBalanceAndMonthlyPayout T.RunParameters{..} = do
   users <- readCsv @T.User U.csvFormat rp'inPath
   forM_ users $ \(Named user@T.User{..}) ->
     let outPath = rp'outPath <> "/" <> show ud'userID <> "_" <> "balancePayout.csv"
+-- TODO:FIXME For some reason spawning threads with forkIO within forM_ doesnt run all the processes.
+-- Maybe this is more of a sqlite3 issue? have to investigate further...
+-- for now inserts are executed sequentially for list of users, yes I know, not ideal =/
+--    in forkIO $ runResourceT $ runConduit $ do
     in runResourceT $ runConduit $ do
             sourceFile rp'interestPath
          .| intoCSV U.csvFormat
