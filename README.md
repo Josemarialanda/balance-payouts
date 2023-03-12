@@ -2,25 +2,26 @@
 
 * Can read and create balance and payout csv from multiple users.csv
 * Memory usage is constant using streaming architecture.
-* DB choice is sqlite3. (Currently DB IO operations are currently sequential...)
+* DB choice is sqlite3.
+  * Limitations: Unfortunately, due to the simplistic nature of SQLite
+    concurrent writes is not something we can do. Thus, we must wait for the first user
+    balance payout entry to be written before moving on to the second user.
 * Although program is type safe, error handling could be improved...
   * I return a malformed csv error if there is an error (in the CSV of course, e.g could not parse a field)
-* 
 
-# FIXME:
+# FIXME?
 
-* Is balance supposed to grow to crazy big numbers with the supplied rate.csv? Calculations look correct. 
-* Cant do insert operations concurrently with sqlite3?
+* Is balance supposed to grow to crazy big numbers with the supplied rate.csv? Calculations look correct.
 
-# TODO: 
+# How to run/build
 
-* UCurrently, CSV is uploaded to db in single IO operations... lol
-  * options are: 
-    * Shard CSV file? - nah, that would require more than constant memory usage...
-    * Stream CSV in chunks to the csv upload action? - amortized constant space complexity is good enough
-    * Upload multiple csv files in parallel
+## How to build
+'nix build .' will build an executable in the result folder
 
-* Check max age parameter
+## How to run
+nix run .#exe runs the Haskell executable. Expects an empty database with name 'balancePayout.db' to be in path.
+e.g: 
+  nix run .#exe -- --payout-rate 2 --max-age 120 --interest-path "./res/test_rates.csv" --in-path "./res/users.csv" --out-dir "./out" --payout-day 25 --contribution-day 1
 
 # Interview: Daily Balance & Payout
 
