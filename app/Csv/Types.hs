@@ -7,7 +7,7 @@ module Csv.Types ( IR (..)
                  , FromNamedRecord
                  , ToNamedRecord ) where
 
-import qualified Csv.Utils      as U
+import qualified Csv.Utils         as U
 import Data.Time                   ( Day )
 import Control.Monad               ( MonadPlus ( mzero ) )
 import Data.Conduit                ( ConduitT

@@ -1,20 +1,26 @@
 module Csv.Stream.StreamCsv ( mkDailyAccountBalanceAndMonthlyPayout ) where
 
-import qualified Csv.Utils as U
-import qualified Csv.Types as T
-import Data.Conduit ( ConduitT, (.|), await, runConduit, yield )
-import Data.Conduit.Binary ( sourceFile, sinkFile )
-import Data.CSV.Conduit
-    ( readCSVFile,
-      writeHeaders,
-      runResourceT,
-      CSV(fromCSV, intoCSV),
-      CSVSettings,
-      MapRow )
-import qualified Data.Vector           as V
-import Data.ByteString (ByteString)
-import Data.CSV.Conduit.Conversion (FromNamedRecord(parseNamedRecord), ToNamedRecord (toNamedRecord), runParser, Named (Named))
-import Control.Monad (forM_)
+import qualified Csv.Utils            as U
+import qualified Csv.Types            as T
+import qualified Data.Vector          as V
+import Control.Monad                  ( forM_ )
+import Data.CSV.Conduit.Conversion    ( FromNamedRecord ( parseNamedRecord )
+                                      , ToNamedRecord ( toNamedRecord )
+                                      , runParser, Named ( Named ) )
+import Data.ByteString                ( ByteString )
+import Data.Conduit                   ( ConduitT
+                                      , (.|)
+                                      , await
+                                      , runConduit
+                                      , yield )
+import Data.Conduit.Binary            ( sourceFile
+                                      , sinkFile )
+import Data.CSV.Conduit               ( readCSVFile,
+                                      writeHeaders,
+                                      runResourceT,
+                                      CSV(fromCSV, intoCSV),
+                                      CSVSettings,
+                                      MapRow )
 
 -- TODO: CHECK MAX AGE parameter
 mkDailyAccountBalanceAndMonthlyPayout :: T.RunParameters -> IO ()
