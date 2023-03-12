@@ -11,13 +11,21 @@
   outputs = { flake-utils, nixpkgs, self }:
     flake-utils.lib.eachDefaultSystem (system:
       let
+        overlay = final: prev: {
+          haskell = prev.haskell // {
+            packageOverrides = hfinal: hprev:
+              prev.haskell.packageOverrides hfinal hprev // {
+                balance-payouts-interview-solution = hfinal.callCabal2nix "balance-payouts-interview-solution" ./. { };
+              };
+          };
+          balance-payouts-interview-solution = final.haskell.lib.compose.justStaticExecutables final.haskellPackages.balance-payouts-interview-solution;
+        };
         config = {};
-        overlays = [];
+        overlays = [ overlay ];
         pkgs = import nixpkgs { inherit config overlays system; };
       in {
         devShell = pkgs.haskellPackages.shellFor {
-          packages = p: [
-          ];
+          packages = p: [ p.balance-payouts-interview-solution ];
           buildInputs = with pkgs; [
             haskellPackages.cabal-install
             haskellPackages.ghcid                   
@@ -27,6 +35,7 @@
             pkgs.sqlite         
           ];
           withHoogle = true;
+          # The shell removes any previous SQlite database present and creates a fresh database.
           shellHook = ''
             DB=./balancePayout.db
             if test -f "$DB"; then
@@ -38,6 +47,12 @@
             rm -f create.sql
           '';
         };
+        # 'nix build .' will build an executable in the result folder
+        defaultPackage = pkgs.balance-payouts-interview-solution;
+        # nix run .#exe runs the Haskell executable. Expects an empty database with name 'balancePayout.db' to be in path.
+        # e.g 
+        #  nix run .#exe -- --payout-rate 2 --max-age 120 --interest-path "./res/test_rates.csv" --in-path "./res/users.csv" --out-dir "./out" --payout-day 25 --contribution-day 1
+        apps.exe = flake-utils.lib.mkApp { drv = pkgs.balance-payouts-interview-solution; };
       }
     );
 }
