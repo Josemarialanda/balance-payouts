@@ -11,7 +11,7 @@
 
 # FIXME? (possible bug?)
 
-* Is balance supposed to grow to crazy big numbers with the supplied rate.csv? Calculations look correct.
+* The user balance grows to a very large number with supplied rate.csv? Calculations look correct.
 
 # How to run/build
 
