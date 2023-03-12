@@ -9,7 +9,7 @@
 * Although program is type safe, error handling could be improved...
   * I return a malformed csv error if there is an error (in the CSV of course, e.g could not parse a field)
 
-# FIXME?
+# FIXME? (possible bug?)
 
 * Is balance supposed to grow to crazy big numbers with the supplied rate.csv? Calculations look correct.
 
