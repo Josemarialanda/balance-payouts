@@ -1,0 +1,56 @@
+cabal-version:      3.0
+name:               balance-payouts-interview-solution
+version:            0.1.0.0
+
+author:             José María Landa Chávez
+maintainer:         josemaria.landa@gmail.com
+
+build-type:         Simple
+
+common warnings
+    ghc-options: -Wall
+                 -Wno-orphans
+
+executable balance-payouts-interview-solution
+    import:             warnings
+    main-is:            Main.hs
+    build-depends:      base ^>=4.15.1.0
+                      , containers
+                      , beam-core
+                      , beam-sqlite
+                      , sqlite-simple
+                      , beam-migrate
+                      , time
+                      , text
+                      , bytestring
+                      , vector
+                      , csv-conduit
+                      , conduit-extra
+                      , conduit
+                      , split
+                      , ordered-containers
+                      
+    other-modules:      Csv.Types
+                      , Csv.Utils
+                      , Csv.Stream.StreamCsv
+                      , Csv.Csv
+                      , DB.DB
+                      , DB.Types
+                      , DB.Utils
+                      , DB.Stream.StreamDB
+    hs-source-dirs:     app
+    default-language:   Haskell2010
+    default-extensions: OverloadedStrings
+                      , InstanceSigs
+                      , GADTs
+                      , RankNTypes
+                      , TypeApplications
+                      , RecordWildCards
+                      , LambdaCase
+                      , DeriveGeneric
+                      , StandaloneDeriving
+                      , TypeSynonymInstances
+                      , MultiParamTypeClasses
+                      , FlexibleInstances
+                      , TypeFamilies
+                      , DeriveAnyClass
