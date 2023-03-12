@@ -34,7 +34,7 @@ data RunParameters = RunParameters {
   , rp'inPath          :: FilePath
   , rp'outPath         :: FilePath
   , rp'payoutRate      :: Double
-  , rp'maxAge          :: Double
+  , rp'maxAge          :: Integer
   , rp'payoutDay       :: Int
   , rp'contributionDay :: Int }
   deriving (Show)

@@ -14,6 +14,7 @@ common warnings
 executable balance-payouts-interview-solution
     import:             warnings
     main-is:            Main.hs
+    ghc-options:        -threaded -rtsopts
     build-depends:      base ^>=4.15.1.0
                       , containers
                       , beam-core
@@ -27,9 +28,6 @@ executable balance-payouts-interview-solution
                       , csv-conduit
                       , conduit-extra
                       , conduit
-                      , split
-                      , ordered-containers
-                      
     other-modules:      Csv.Types
                       , Csv.Utils
                       , Csv.Stream.StreamCsv

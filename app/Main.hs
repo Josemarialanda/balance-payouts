@@ -9,6 +9,9 @@ import System.Exit          ( exitFailure
 main :: IO ()
 main = getArgs >>= run
 
+-- main :: IO ()
+-- main = mkDailyAccountBalanceAndMonthlyPayout $ CSVT.RunParameters "./res/rates.csv" "./res/users.csv" "./out" 2 2100 25 1
+
 run :: [FilePath] -> IO ()
 run ["-h"] = usage   >> exit
 run ["-v"] = version >> exit

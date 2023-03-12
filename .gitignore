@@ -1,2 +1,5 @@
 .direnv/
 dist-newstyle/
+result
+balancePayout.db
+out/

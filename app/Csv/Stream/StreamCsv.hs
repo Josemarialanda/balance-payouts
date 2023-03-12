@@ -1,11 +1,10 @@
 module Csv.Stream.StreamCsv ( mkDailyAccountBalanceAndMonthlyPayout ) where
-  
+
 import qualified Csv.Utils            as U
 import qualified Csv.Types            as T
 import qualified Data.Vector          as V
--- import Control.Concurrent             ( forkIO, threadDelay )
 import DB.Stream.StreamDB             ( uploadCsv )
-import Control.Monad                  ( forM_  )
+import Control.Monad                  ( forM_ )
 import Control.Monad.IO.Class         ( MonadIO (..) )
 import Data.CSV.Conduit.Conversion    ( FromNamedRecord ( parseNamedRecord )
                                       , ToNamedRecord ( toNamedRecord )
@@ -25,22 +24,17 @@ import Data.CSV.Conduit               ( readCSVFile,
                                       CSVSettings,
                                       MapRow )
 
--- TODO: CHECK MAX AGE parameter
 mkDailyAccountBalanceAndMonthlyPayout :: T.RunParameters -> IO ()
 mkDailyAccountBalanceAndMonthlyPayout T.RunParameters{..} = do
   users <- readCsv @T.User U.csvFormat rp'inPath
   forM_ users $ \(Named user@T.User{..}) ->
     let outPath = rp'outPath <> "/" <> show ud'userID <> "_" <> "balancePayout.csv"
--- TODO:FIXME For some reason spawning threads with forkIO within forM_ doesnt run all the processes.
--- Maybe this is more of a sqlite3 issue? have to investigate further...
--- for now inserts are executed sequentially for list of users, yes I know, not ideal =/
---    in forkIO $ runResourceT $ runConduit $ do
     in runResourceT $ runConduit $ do
-            sourceFile rp'interestPath
-         .| intoCSV U.csvFormat
-         .| balancePayoutPipe user 0 (balancePayoutHandler user)
-         .| (writeHeaders U.csvFormat >> fromCSV U.csvFormat)
-         .| sinkFile outPath >> liftIO (uploadCsv user outPath)
+           sourceFile rp'interestPath
+        .| intoCSV U.csvFormat
+        .| balancePayoutPipe user 0 (balancePayoutHandler user)
+        .| (writeHeaders U.csvFormat >> fromCSV U.csvFormat)
+        .| sinkFile outPath >> liftIO (uploadCsv user outPath)
   where
   balancePayoutHandler :: T.User -> Double -> T.IR -> T.BalancePayout
   balancePayoutHandler user@T.User{..} balance irData@T.IR{..}
@@ -94,11 +88,16 @@ mkDailyAccountBalanceAndMonthlyPayout T.RunParameters{..} = do
             Left e  -> error $ "Malformed CSV:\n" <> e
             Right r -> handler balance r
           balancePayoutDataRecord = toNamedRecord balancePayoutData
-      if bpd'date < ud'dob
-      then balancePayoutPipe user bpd'balance handler
-      else do
-        yield balancePayoutDataRecord
-        balancePayoutPipe user bpd'balance handler
+      if maxAgeReached rp'maxAge bpd'date ud'dob 
+      then return () 
+      else if bpd'date < ud'dob
+           then balancePayoutPipe user bpd'balance handler
+           else do
+             yield balancePayoutDataRecord
+             balancePayoutPipe user bpd'balance handler
 
   readCsv :: (FromNamedRecord a, ToNamedRecord a) => CSVSettings -> FilePath -> IO [Named a]
   readCsv format filepath = V.toList <$> readCSVFile format filepath
+
+  maxAgeReached :: Integer -> T.Day -> T.Day -> Bool
+  maxAgeReached maxAge date dob = fromInteger (U.year date - U.year dob) >= maxAge
