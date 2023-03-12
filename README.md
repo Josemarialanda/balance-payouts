@@ -19,9 +19,21 @@
 'nix build .' will build an executable in the result folder
 
 ## How to run
-nix run .#exe runs the Haskell executable. Expects an empty database with name 'balancePayout.db' to be in path.
-e.g: 
-  nix run .#exe -- --payout-rate 2 --max-age 120 --interest-path "./res/test_rates.csv" --in-path "./res/users.csv" --out-dir "./out" --payout-day 25 --contribution-day 1
+`nix run .#exe` runs the Haskell executable. Expects an empty database (with the right tables) with name 'balancePayout.db' to be in path. You can do this yourself or just simply the shell (with all environment variables and dependencies setup for you) with `nix develop .`
+
+Or if you really want to setup SQLite youself, these are the commands you need to run:
+
+```sql
+echo "CREATE TABLE users (ut_userID INTEGER NOT NULL, ut_dob VARCHAR NOT NULL, ut_joinDob VARCHAR NOT NULL, ut_joinContribution DOUBLE NOT NULL, ut_monthlyContribution DOUBLE NOT NULL, ut_retirementDate VARCHAR NOT NULL, PRIMARY KEY ( ut_userID ));" > create.sql
+echo "CREATE TABLE balancePayout (bpt_date VARCHAR NOT NULL, bpt_balance DOUBLE NOT NULL, bpt_payout DOUBLE NOT NULL, bpt__ut_userID INTEGER NOT NULL);" >> create.sql
+sqlite3 balancePayout.db '.read create.sql'
+```
+
+e.g:
+
+```haskell
+nix run .#exe -- --payout-rate 2 --max-age 120 --interest-path "./res/test_rates.csv" --in-path "./res/users.csv" --out-dir "./out" --payout-day 25 --contribution-day 1
+```
 
 # Interview: Daily Balance & Payout
 
