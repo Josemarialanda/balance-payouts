@@ -36,7 +36,6 @@ executable balance-payouts-interview-solution
                       , Csv.Csv
                       , DB.DB
                       , DB.Types
-                      , DB.Utils
                       , DB.Stream.StreamDB
     hs-source-dirs:     app
     default-language:   Haskell2010

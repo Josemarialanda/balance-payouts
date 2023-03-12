@@ -19,11 +19,11 @@ import Conduit                     ( ResourceT
                                    , Identity )
 import Data.CSV.Conduit.Conversion ( runParser )
 
-uploadCsv :: CSVT.User -> DBT.RunParameters -> IO ()
-uploadCsv user DBT.RunParameters{..} = do
+uploadCsv :: CSVT.User -> FilePath -> IO ()
+uploadCsv user outPath = do
   userRef <- DB.insertUser user
   runResourceT $ runConduit $
-    sourceFile rp'inPath
+    sourceFile outPath
       .| intoCSV U.csvFormat
       .| dbPipe userRef
       .| sinkNull

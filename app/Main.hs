@@ -1,8 +1,12 @@
 module Main where
 
+import qualified Csv.Types  as CSVT
 import Csv.Stream.StreamCsv ( mkDailyAccountBalanceAndMonthlyPayout )
-import qualified Csv.Types as T
 
+csvRunParameters :: CSVT.RunParameters
+csvRunParameters = CSVT.RunParameters "./res/rates.csv" "./res/users.csv" "./out" 2 1200 1 25
+
+-- TODO: Make command line interface
 main :: IO ()
-main = mkDailyAccountBalanceAndMonthlyPayout $ T.RunParameters "./res/rates.csv" "./res/users.csv" "./out/results.csv" 2 1200 1 25
+main = mkDailyAccountBalanceAndMonthlyPayout csvRunParameters
 
