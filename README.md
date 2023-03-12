@@ -1,6 +1,13 @@
+# FIXME:
+
+* Is balance supposed to grow to crazy big numbers with the supplied rate.csv? Calculations look correct. 
+
 # TODO: 
 
 * Upload CSV to DB in chunks rather than doing single IO operations... lol
+  * options are: 
+    * Shard CSV file? - nah, that would require more than constant memory usage...
+    * Stream CSV in chunks to the csv upload action? - amortized constant space complexity is good enough
 
 * Make command line interface
 
