@@ -45,6 +45,7 @@
             echo "CREATE TABLE balancePayout (bpt_date VARCHAR NOT NULL, bpt_balance DOUBLE NOT NULL, bpt_payout DOUBLE NOT NULL, bpt__ut_userID INTEGER NOT NULL);" >> create.sql
             sqlite3 balancePayout.db '.read create.sql'
             rm -f create.sql
+            mkdir out
           '';
         };
         # 'nix build .' will build an executable in the result folder
